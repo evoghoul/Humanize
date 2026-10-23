@@ -114,15 +114,13 @@ class GeminiService:
                 system_instruction=system_prompt,
                 temperature=temperature,
                 max_output_tokens=token_estimate,
-                thinking_config=types.ThinkingConfig(thinking_budget=0),
             )
 
             models_to_try = [self.model] if self.model else []
             fallback_candidates = [
                 "gemini-3.8-flash",
-                "gemini-3.8-flash-lite",
-                "gemini-2.0-flash",
-                "gemini-1.5-flash",
+                "gemini-3.8-pro",
+                "gemini-flash-latest",
             ]
             for cand in fallback_candidates:
                 if cand not in models_to_try:
@@ -141,12 +139,28 @@ class GeminiService:
                     if output:
                         self._last_error = None
                         if target_model != self.model:
-                            logger.info("Retried with alternate model %s successfully.", target_model)
+                            logger.info("✔ Gemini model %s answered successfully.", target_model)
                         return True, output, None, False
                 except Exception as model_err:
                     err_msg = str(model_err)
                     last_err_str = err_msg
                     err_lower = err_msg.lower()
+
+                    # Handle 503 high-demand spike with a short retry
+                    if "503" in err_msg or "unavailable" in err_lower:
+                        time.sleep(1.0)
+                        try:
+                            retry_resp = client.models.generate_content(
+                                model=target_model,
+                                contents=prompt,
+                                config=config,
+                            )
+                            retry_out = (retry_resp.text or "").strip()
+                            if retry_out:
+                                self._last_error = None
+                                return True, retry_out, None, False
+                        except Exception:
+                            pass
 
                     is_rl = (
                         "429" in err_msg
@@ -157,17 +171,18 @@ class GeminiService:
                     )
                     if is_rl:
                         self._rate_limited_until = time.time() + 60.0
-                        self._last_error = f"Rate limit reached (429 / ResourceExhausted): {err_msg}"
+                        self._last_error = "Rate limit reached (429 / ResourceExhausted)"
                         logger.warning(
-                            "Gemini API rate limit reached on %s. Cooling down for 60s.",
+                            "Gemini API quota/rate limit reached on %s. Cooling down for 60s.",
                             target_model,
                         )
                         return False, "", self._last_error, True
 
-                    logger.warning(
-                        "Gemini API call to %s failed (%s). Checking next available model...",
+                    short_err = "503 High Demand Spike" if "503" in err_msg else "Model Unavailable"
+                    logger.info(
+                        "Gemini %s busy (%s). Checking next available model...",
                         target_model,
-                        err_msg,
+                        short_err,
                     )
 
             self._last_error = f"Gemini API error across models: {last_err_str}"
