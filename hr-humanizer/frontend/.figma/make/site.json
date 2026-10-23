@@ -1,0 +1,11 @@
+{
+  "title": "HumanizeAI",
+  "description": "Generates fully functional websites by following user prompts, enabling quick and easy web development for designers and developers.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
