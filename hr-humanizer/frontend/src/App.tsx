@@ -1347,7 +1347,7 @@ Recommendation: Strong Hire (Score: 4.6 / 5.0). Next step: Offer review schedule
                                 border: "1px solid rgba(16, 185, 129, 0.3)",
                               }}
                             >
-                              <Sparkles size={11} /> Google Gemini ({result.model || "gemini-2.5-flash"})
+                              <Sparkles size={11} /> Google Gemini ({result.model || "gemini-3.8-flash"})
                             </span>
                           ) : (
                             <span
@@ -1485,7 +1485,7 @@ Recommendation: Strong Hire (Score: 4.6 / 5.0). Next step: Offer review schedule
                               num: 4,
                               title: "4. Contextual Human Voice Synthesis",
                               desc: `Tone calibrated to ${result.options.tone} (${result.options.intensity}) in ${result.options.writingMode || "Clarity Improvement"} mode.`,
-                              meta: result.provider === "gemini" ? `Google Gemini Cloud AI (${result.model || "gemini-2.5-flash"})` : "FactGuard™ Deterministic Engine",
+                              meta: result.provider === "gemini" ? `Google Gemini Cloud AI (${result.model || "gemini-3.8-flash"})` : "FactGuard™ Deterministic Engine",
                             },
 
                             {
@@ -2546,7 +2546,7 @@ Recommendation: Strong Hire (Score: 4.6 / 5.0). Next step: Offer review schedule
                     <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
                       <span style={{ color: "#059669", fontWeight: 700 }}>1.</span>
                       <div>
-                        <strong>Google Gemini:</strong> Powered by <code>gemini-2.5-flash</code> for high-throughput, authentic human voice synthesis.
+                        <strong>Google Gemini:</strong> Powered by <code>gemini-3.8-flash</code> for high-throughput, authentic human voice synthesis.
                       </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>

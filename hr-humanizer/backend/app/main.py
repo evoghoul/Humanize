@@ -39,14 +39,20 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# Enable CORS for local development
+# Enable CORS for local development and production Vercel frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origin_regex=r"https?://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/")
+def get_root():
+    """Root status endpoint for cloud health monitors."""
+    return {"status": "ok", "service": "GoHumanize Backend API", "version": "1.0.0"}
 
 
 @app.get("/health", response_model=HealthResponse)
@@ -67,7 +73,7 @@ def get_health() -> HealthResponse:
         active_provider="gemini",
         ollama_reachable=False,
         model_available=True,
-        available_models=["gemini-2.5-flash", "gemini-2.5-pro", "gemini-2.0-flash"],
+        available_models=["gemini-3.8-flash", "gemini-3.8-flash-lite", "gemini-2.0-flash"],
     )
 
 

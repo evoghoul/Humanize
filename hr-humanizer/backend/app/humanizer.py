@@ -593,7 +593,7 @@ class HumanizerService:
             "reachable": g_info["configured"],
             "model_available": True,
             "active_model": g_info["model"],
-            "available_models": ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-2.0-flash"],
+            "available_models": ["gemini-3.8-flash", "gemini-3.8-flash-lite", "gemini-2.0-flash"],
             "gemini_configured": g_info["configured"],
             "gemini_rate_limited": g_info["rate_limited"],
             "cooldown_remaining": g_info["cooldown_remaining"],

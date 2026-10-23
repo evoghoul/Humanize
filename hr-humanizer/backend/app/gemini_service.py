@@ -117,8 +117,13 @@ class GeminiService:
                 thinking_config=types.ThinkingConfig(thinking_budget=0),
             )
 
-            models_to_try = [self.model]
-            fallback_candidates = ["gemini-flash-latest", "gemini-2.5-flash", "gemini-2.5-flash-lite"]
+            models_to_try = [self.model] if self.model else []
+            fallback_candidates = [
+                "gemini-3.8-flash",
+                "gemini-3.8-flash-lite",
+                "gemini-2.0-flash",
+                "gemini-1.5-flash",
+            ]
             for cand in fallback_candidates:
                 if cand not in models_to_try:
                     models_to_try.append(cand)
