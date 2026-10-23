@@ -21,3 +21,4 @@ dataset-v5/
 node_modules/
 .pytest_cache/
 .vscode/
+push_to_github.bat
