@@ -24,9 +24,9 @@ except ImportError:
 class Settings(BaseModel):
     # Google Gemini AI settings
     gemini_api_key: str | None = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-    gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+    gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
     gemini_timeout: float = float(os.getenv("GEMINI_TIMEOUT", "30.0"))
-    enable_gemini: bool = os.getenv("ENABLE_GEMINI", "false").lower() in ("true", "1", "yes")
+    enable_gemini: bool = os.getenv("ENABLE_GEMINI", "true").lower() in ("true", "1", "yes")
 
     # Legacy alias for backward compatibility
     @property

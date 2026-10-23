@@ -118,8 +118,10 @@ class GeminiService:
 
             models_to_try = [self.model] if self.model else []
             fallback_candidates = [
+                "gemini-3.5-flash-lite",
+                "gemini-3.6-flash",
+                "gemini-3.1-flash-lite",
                 "gemini-3.8-flash",
-                "gemini-3.8-pro",
                 "gemini-flash-latest",
             ]
             for cand in fallback_candidates:
@@ -127,6 +129,8 @@ class GeminiService:
                     models_to_try.append(cand)
 
             last_err_str = ""
+            any_was_rl = False
+
             for target_model in models_to_try:
                 try:
                     response = client.models.generate_content(
@@ -170,13 +174,12 @@ class GeminiService:
                         or "too many requests" in err_lower
                     )
                     if is_rl:
-                        self._rate_limited_until = time.time() + 60.0
-                        self._last_error = "Rate limit reached (429 / ResourceExhausted)"
+                        any_was_rl = True
                         logger.warning(
-                            "Gemini API quota/rate limit reached on %s. Cooling down for 60s.",
+                            "Gemini model %s quota/rate limited. Trying next available model...",
                             target_model,
                         )
-                        return False, "", self._last_error, True
+                        continue
 
                     short_err = "503 High Demand Spike" if "503" in err_msg else "Model Unavailable"
                     logger.info(
@@ -184,6 +187,11 @@ class GeminiService:
                         target_model,
                         short_err,
                     )
+
+            if any_was_rl:
+                self._rate_limited_until = time.time() + 60.0
+                self._last_error = "Rate limit reached (429 / ResourceExhausted across models)"
+                return False, "", self._last_error, True
 
             self._last_error = f"Gemini API error across models: {last_err_str}"
             return False, "", self._last_error, False
